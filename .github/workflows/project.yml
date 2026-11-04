@@ -807,7 +807,7 @@ jobs:
                 await db.user.upsert({
                   where: { email },
                   update: {},
-                  data: {
+                  create: {
                     email,
                     passwordHash,
                     account: { create: { balance: 100000n } },
