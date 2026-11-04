@@ -1,0 +1,63 @@
+services:
+  db:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_USER: payment
+      POSTGRES_PASSWORD: local-dev-only
+      POSTGRES_DB: payments
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - payment-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment -d payments"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      target: runtime
+    environment:
+      PORT: "3000"
+      DATABASE_URL: postgresql://payment:local-dev-only@db:5432/payments?schema=public
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      DEMO_PASSWORD: ${DEMO_PASSWORD:-}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  test-db:
+    image: postgres:16-bookworm
+    profiles: ["test"]
+    environment:
+      POSTGRES_USER: payment
+      POSTGRES_PASSWORD: local-test-only
+      POSTGRES_DB: payments_test
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment -d payments_test"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  tests:
+    profiles: ["test"]
+    build:
+      context: .
+      target: build
+    environment:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://payment:local-test-only@test-db:5432/payments_test?schema=public
+      JWT_SECRET: test-only-secret-for-isolated-integration-tests-123456
+    depends_on:
+      test-db:
+        condition: service_healthy
+    command: ["sh", "-c", "npm run db:deploy && npm test"]
+
+volumes:
+  payment-data:
