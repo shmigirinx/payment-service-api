@@ -3,8 +3,7 @@
 Учебный проект: TypeScript, NestJS, REST, PostgreSQL,
 Prisma, JWT, Guards, Pipes, Interceptors, Jest, Docker Compose и Swagger.
 
-Проект демонстрирует работу backend-сервиса и не подтверждает
-коммерческий опыт в финтехе.
+Проект демонстрирует работу backend-сервиса
 
 ## Возможности
 
