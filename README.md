@@ -1,6 +1,6 @@
 # Payment Service API
 
-Учебный проект для портфолио: TypeScript, NestJS, REST, PostgreSQL,
+Учебный проект: TypeScript, NestJS, REST, PostgreSQL,
 Prisma, JWT, Guards, Pipes, Interceptors, Jest, Docker Compose и Swagger.
 
 Проект демонстрирует работу backend-сервиса и не подтверждает
